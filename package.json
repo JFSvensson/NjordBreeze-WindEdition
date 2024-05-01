@@ -1,0 +1,27 @@
+{
+  "name": "njordbreezewindedition",
+  "version": "0.1.0",
+  "description": "NjordBreeze Wind Edition is a visualization of wind data from SMHI using part of the NjordBreeze API",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --inspect -r dotenv/config src/server.js",
+    "test": "test"
+  },
+  "author": "Fredrik Svensson",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "mongoose": "^8.3.3",
+    "morgan": "^1.10.0",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
