@@ -9,11 +9,7 @@ const __dirname = path.dirname(__filename)
 let client
 
 export function getElasticsearchClient() {
-  console.log('Path:', path.resolve(__dirname, 'http_ca.crt'))
-  console.log('File exists:', fs.existsSync(path.resolve(__dirname, 'http_ca.crt')))
-  console.log('Password:', process.env.ELASTIC_PASSWORD)
   if (!client) {
-    console.log('Creating new Elasticsearch client')
     client = new Client({ 
       node: 'https://localhost:9200',
       auth: {
@@ -25,7 +21,6 @@ export function getElasticsearchClient() {
         rejectUnauthorized: true
       }
     })
-    console.log('Elasticsearch client created', client)
   }
   return client
 }
