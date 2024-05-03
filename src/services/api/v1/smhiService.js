@@ -7,7 +7,7 @@
  */
 
 import { SMHIStation } from '../../../models/smhiStation.js'
-import { getElasticsearchClient } from '../../config/elasticsearch.js'
+import { getElasticsearchClient } from '../../../config/elasticsearch.js'
 
 const client = getElasticsearchClient()
 
