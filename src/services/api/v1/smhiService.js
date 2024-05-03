@@ -35,7 +35,7 @@ export class SMHIService {
         windDirectionResponse.json()
       ])
 
-      const stationsData = tempData.station.map(station => {
+      const bulkOps = tempData.station.flatMap(station => {
         const windSpeedStation = windSpeedData.station.find(ws => ws.key === station.key)
         const windDirectionStation = windDirectionData.station.find(wd => wd.key === station.key)
 
@@ -58,16 +58,15 @@ export class SMHIService {
         }
         SMHIStation.findOneAndUpdate({ key: station.key }, stationData, { new: true, upsert: true })
 
-        return stationData
+        // Prepare bulk operation
+        return [{ index: { _index: 'smhi-data', _id: station.key }}, stationData]
       })
 
-      // Index the data in Elasticsearch
-      await client.index({
-        index: 'smhi-data', // replace with your preferred index name
-        body: stationsData,
-      })
+      // Execute bulk operation
+      await client.bulk({ refresh: true, body: bulkOps })
+      console.log('Bulk operation executed successfully!', bulkOps.length, 'items indexed.', bulkOps)
+      return bulkOps.map(op => op[1])  // Return only the data
 
-      return stationsData
     } catch (error) {
       console.error('Error fetching data from SMHI:', error)
       throw error
