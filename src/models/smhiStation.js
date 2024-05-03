@@ -36,6 +36,20 @@ const schema = new mongoose.Schema({
   owner: {
     type: String,
     required: true
+  },
+  temperature: {
+    type: Number,
+    required: true
+  },
+  windSpeed: {
+    type: Number
+  },
+  windDirection: {
+    type: Number
+  },
+  date: {
+    type: Date,
+    required: true
   }
 }, {
   timestamps: true,
