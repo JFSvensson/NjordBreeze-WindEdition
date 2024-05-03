@@ -7,6 +7,9 @@
  */
 
 import { SMHIStation } from '../../../models/smhiStation.js'
+import { getElasticsearchClient } from '../../config/elasticsearch.js'
+
+const client = getElasticsearchClient()
 
 export class SMHIService {
   async getStations() {
@@ -54,7 +57,14 @@ export class SMHIService {
           date: latestTemperature ? new Date(latestTemperature.date) : null
         }
         SMHIStation.findOneAndUpdate({ key: station.key }, stationData, { new: true, upsert: true })
+
         return stationData
+      })
+
+      // Index the data in Elasticsearch
+      await client.index({
+        index: 'smhi-data', // replace with your preferred index name
+        body: stationsData,
       })
 
       return stationsData
