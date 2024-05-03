@@ -13,14 +13,33 @@ export class SMHIService {
     // Entry point for the SMHI API. https://opendata.smhi.se/apidocs/metobs/index.html
     const urlEntryPoint = 'https://opendata-download-metobs.smhi.se/api/version/1.0/'
     const allStationsAirTemperature = 'parameter/1/station-set/all/period/latest-hour/data.json'
+    const allStationsWindSpeed = 'parameter/4/station-set/all/period/latest-hour/data.json'
+    const allStationsWindDirection = 'parameter/3/station-set/all/period/latest-hour/data.json'
     try {
-      const response = await fetch(urlEntryPoint + allStationsAirTemperature)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json()
+      const [tempResponse, windSpeedResponse, windDirectionResponse] = await Promise.all([
+        fetch(urlEntryPoint + allStationsAirTemperature),
+        fetch(urlEntryPoint + allStationsWindSpeed),
+        fetch(urlEntryPoint + allStationsWindDirection)
+      ])
 
-      for (let station of data.station) {
+      if (!tempResponse.ok || !windSpeedResponse.ok || !windDirectionResponse.ok) {
+        throw new Error(`HTTP error! status: ${tempResponse.status} or ${windSpeedResponse.status} or ${windDirectionResponse.status}`)
+      }
+
+      const [tempData, windSpeedData, windDirectionData] = await Promise.all([
+        tempResponse.json(),
+        windSpeedResponse.json(),
+        windDirectionResponse.json()
+      ])
+
+      const stationsData = tempData.station.map(station => {
+        const windSpeedStation = windSpeedData.station.find(ws => ws.key === station.key)
+        const windDirectionStation = windDirectionData.station.find(wd => wd.key === station.key)
+
+        const latestTemperature = station.value[0]
+        const latestWindSpeed = windSpeedStation ? windSpeedStation.value[0] : null
+        const latestWindDirection = windDirectionStation ? windDirectionStation.value[0] : null
+
         const stationData = {
           key: station.key,
           stationname: station.name,
@@ -28,17 +47,17 @@ export class SMHIService {
             type: "Point",
             coordinates: [station.longitude, station.latitude]
           },
-          owner: "SMHI"
+          owner: "SMHI",
+          temperature: latestTemperature ? latestTemperature.value : null,
+          windSpeed: latestWindSpeed ? latestWindSpeed.value : null,
+          windDirection: latestWindDirection ? latestWindDirection.value : null,
+          date: latestTemperature ? new Date(latestTemperature.date) : null
         }
-        await SMHIStation.findOneAndUpdate({ key: station.key }, stationData, { new: true, upsert: true })
-      }
+        SMHIStation.findOneAndUpdate({ key: station.key }, stationData, { new: true, upsert: true })
+        return stationData
+      })
 
-      return data.station.map(station => ({
-        key: station.key,
-        name: station.name,
-        latitude: station.latitude,
-        longitude: station.longitude
-      }))
+      return stationsData
     } catch (error) {
       console.error('Error fetching data from SMHI:', error)
       throw error
