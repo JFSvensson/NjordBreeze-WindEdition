@@ -17,22 +17,33 @@ export class SMHIController {
   }
 
   /**
-   * Get all weather stations.
-   * @param {Request} req - The request object.
-   * @param {Response} res - The response object.
-   * @returns {void}
-   * @throws {Error} Throws an error if no weather station is not found.
-   * @throws {Error} Throws an error if an error occurs while fetching the weather stations.
+   * Get the most current weather data from all stations.
    */
-  async getLatestWeather(req, res) {
+  async getCurrentWeather(req, res) {
     try {
-      const station = await this.smhiService.getLatestWeather()
-      if (!station) {
-        return res.status(404).json({ message: 'No station found' })
+      const currentWeather = await this.smhiService.getCurrentWeather()
+      if (!currentWeather) {
+        return res.status(404).json({ message: 'No weather data found' })
       }
-      res.json(station)
+      res.json(currentWeather)
     } catch (error) {
-      res.status(500).json({ message: 'An error occurred while fetching the weather stations' })
+      res.status(500).json({ message: 'An error occurred while fetching the weather data.' })
+    }
+  }
+
+  /**
+   * Get the most current highest wind speed from all stations.
+   */
+  async getCurrentHighestWindSpeed(req, res) {
+    try {
+      const currentHighestWindSpeed = await this.smhiService.getCurrentHighestWindSpeed()
+      if (!currentHighestWindSpeed) {
+        return res.status(404).json({ message: 'No wind speed data found' })
+      }
+      res.json(currentHighestWindSpeed)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'An error occurred while fetching the wind speed data' })
     }
   }
 }
