@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: NjordBreeze Wind Edition API
+  version: 0.1.0
+  description: API for using SMHI open data for visualizing wind speed.
+  contact:
+    name: Fredrik Svensson
+    email: fs222id@student.lnu.se
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://svenssonom.se/njordbreeze-we/api/v1
+    description: Production server
+paths:
+  /:
+    get:
+      summary: Get API status
+      description: >-
+        Returns the status of the API and provides dynamical links to other
+        endpoints.
+      tags:
+        - Status
+      responses:
+        '200':
+          description: API is up and running.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: >-
+                      Welcome to the NjordBreeze API. Use our endpoints to
+                      interact with weather data.
+                  documentation:
+                    type: string
+                    example: https://svenssonom.se/njordbreeze-we/docs
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        description: The current endpoint.
+                        example: /
+                      weather:
+                        type: string
+                        description: The weather data endpoint.
+                        example: /weather
+  /smhi/current-weather:
+    get:
+      summary: Get the most current weather data from all active SMHI weather stations
+      description: >-
+        Returns information about temperature, wind speed and wind direction
+        from all currently active SMHI stations.
+      tags:
+        - SMHI Weather Stations
+      responses:
+        '200':
+          description: Successful response with SMHI weather station information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SMHIWeatherStation'
+        '404':
+          description: SMHI weather station not found.
+  /smhi/current-highest-wind-speed:
+    get:
+      summary: >-
+        Get the most current highest wind speed data from all active SMHI
+        weather stations
+      description: >-
+        Returns information about the station with the highest wind speed from
+        all currently active SMHI stations.
+      tags:
+        - SMHI Weather Stations
+      responses:
+        '200':
+          description: Successful response with SMHI weather station information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SMHIWeatherStation'
+        '404':
+          description: SMHI weather station not found.
+components:
+  schemas:
+    SMHIWeatherStation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the weather station.
+        stationname:
+          type: string
+          description: The name of the weather station.
+        key:
+          type: string
+          description: The key provided by SMHI.
+        location:
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              description: The type of the GeoJSON object, e.g., Point.
+              enum:
+                - Point
+              default: Point
+            coordinates:
+              type: array
+              description: A longitude and latitude coordinates of the station.
+              minItems: 2
+              maxItems: 2
+              items:
+                type: number
+                format: double
+        owner:
+          type: string
+          description: The owner of the weather station, SMHI.
+        temperature:
+          type: number
+          description: The temperature in degrees Celsius.
+        windSpeed:
+          type: number
+          description: The wind speed in meters per second.
+        windDirection:
+          type: number
+          description: The wind direction in degrees.
+        date:
+          type: Date
+          description: The date and time of the weather data.
+tags: []
