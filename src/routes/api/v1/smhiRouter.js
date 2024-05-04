@@ -16,9 +16,9 @@ const hateoas = new HateoasMiddleware()
 
 /**
  * @openapi
- * /smhi/latest-weather:
+ * /smhi/current-weather:
  *  get:
- *    summary: Get the latest weather data from all active SMHI weather stations
+ *    summary: Get the most current weather data from all active SMHI weather stations
  *    description: Returns information about temperature, wind speed and wind direction from all currently active SMHI stations.
  *    tags:
  *      - SMHI Weather Stations
@@ -33,11 +33,34 @@ const hateoas = new HateoasMiddleware()
  *        description: SMHI weather station not found.
  */
 router.get(
-  '/latest-weather',
+  '/current-weather',
   hateoas.addLinks, 
- (req, res) => smhiController.getLatestWeather(req, res)
+ (req, res) => smhiController.getCurrentWeather(req, res)
 )
 
+/**
+ * @openapi
+ * /smhi/current-highest-wind-speed:
+ *  get:
+ *    summary: Get the most current highest wind speed data from all active SMHI weather stations
+ *    description: Returns information about the station with the highest wind speed from all currently active SMHI stations.
+ *    tags:
+ *      - SMHI Weather Stations
+ *    responses:
+ *      '200':
+ *        description: Successful response with SMHI weather station information.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/SMHIWeatherStation'
+ *      '404':
+ *        description: SMHI weather station not found.
+ */
+router.get(
+  '/current-highest-wind-speed',
+  hateoas.addLinks,
+  (req, res) => smhiController.getCurrentHighestWindSpeed(req, res)
+)
 
 /**
  * @openapi
@@ -79,4 +102,16 @@ router.get(
  *        owner:
  *          type: string
  *          description: The owner of the weather station, SMHI.
+ *        temperature:
+ *          type: number
+ *          description: The temperature in degrees Celsius.
+ *        windSpeed:
+ *          type: number
+ *          description: The wind speed in meters per second.
+ *        windDirection:
+ *          type: number
+ *          description: The wind direction in degrees.
+ *        date:
+ *          type: Date
+ *          description: The date and time of the weather data.
  */
