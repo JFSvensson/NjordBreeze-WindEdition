@@ -16,10 +16,10 @@ const hateoas = new HateoasMiddleware()
 
 /**
  * @openapi
- * /smhi/stations:
+ * /smhi/latest-weather:
  *  get:
- *    summary: Get information about all active SMHI weather stations
- *    description: Returns information about a currently active SMHI stations (those that has reported temperature data for the last hour).
+ *    summary: Get the latest weather data from all active SMHI weather stations
+ *    description: Returns information about temperature, wind speed and wind direction from all currently active SMHI stations.
  *    tags:
  *      - SMHI Weather Stations
  *    responses:
@@ -33,9 +33,9 @@ const hateoas = new HateoasMiddleware()
  *        description: SMHI weather station not found.
  */
 router.get(
-  '/stations',
+  '/latest-weather',
   hateoas.addLinks, 
- (req, res) => smhiController.getStations(req, res)
+ (req, res) => smhiController.getLatestWeather(req, res)
 )
 
 
