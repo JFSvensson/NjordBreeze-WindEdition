@@ -24,9 +24,9 @@ export class SMHIController {
    * @throws {Error} Throws an error if no weather station is not found.
    * @throws {Error} Throws an error if an error occurs while fetching the weather stations.
    */
-  async getStations(req, res) {
+  async getLatestWeather(req, res) {
     try {
-      const station = await this.smhiService.getStations()
+      const station = await this.smhiService.getLatestWeather()
       if (!station) {
         return res.status(404).json({ message: 'No station found' })
       }

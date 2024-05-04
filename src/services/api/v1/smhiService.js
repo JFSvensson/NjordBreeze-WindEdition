@@ -12,7 +12,7 @@ import { getElasticsearchClient } from '../../../config/elasticsearch.js'
 const client = getElasticsearchClient()
 
 export class SMHIService {
-  async getStations() {
+  async getLatestWeather() {
     // Entry point for the SMHI API. https://opendata.smhi.se/apidocs/metobs/index.html
     const urlEntryPoint = 'https://opendata-download-metobs.smhi.se/api/version/1.0/'
     const allStationsAirTemperature = 'parameter/1/station-set/all/period/latest-hour/data.json'
