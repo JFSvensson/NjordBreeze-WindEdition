@@ -65,10 +65,8 @@ export class SMHIService {
 
       // Execute bulk operation
       const bulkResponse = await client.bulk({ refresh: true, body: bulkOps.flat() })
-      console.log('Bulk operation response:', bulkResponse)
-
       console.log('Bulk operation executed successfully!', bulkOps.length, 'items indexed.')
-      return bulkOps.map(op => op[1])  // Return only the data
+      return bulkResponse
 
     } catch (error) {
       console.error('Error fetching data from SMHI:', error)
