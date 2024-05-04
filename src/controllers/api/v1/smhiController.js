@@ -46,4 +46,20 @@ export class SMHIController {
       res.status(500).json({ message: 'An error occurred while fetching the wind speed data' })
     }
   }
+
+  /**
+   * Get the stations with moderate wind speed, and above.
+   */
+  async getStationsWithModerateWindSpeed(req, res) {
+    try {
+      const moderateWindSpeed = await this.smhiService.getStationsWithModerateWindSpeed()
+      if (!moderateWindSpeed) {
+        return res.status(404).json({ message: 'No wind speed data found' })
+      }
+      res.json(moderateWindSpeed)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'An error occurred while fetching the wind speed data' })
+    }
+  }
 }

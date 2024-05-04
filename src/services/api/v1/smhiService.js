@@ -75,20 +75,8 @@ export class SMHIService {
   }
 
   async getCurrentHighestWindSpeed() {
-
-    console.log('Getting index mapping...')
-    client.indices.exists({ index: 'smhi-data' }).then(console.log)
-
     try {
-      const mapping = await client.indices.getMapping({ index: 'smhi-data' })
-      console.log('Index mapping:', mapping)
-    } catch (error) {
-      console.error('Error getting index mapping:', error)
-    }  
-
-    console.log('Searching for max windspeed...')
-    try {
-      const body = await client.search({
+      const response = await client.search({
         index: 'smhi-data',
         body: {
           size: 1,
@@ -104,16 +92,44 @@ export class SMHIService {
           }
         }
       })
-      console.log('Search response:', body)
-      console.log('First hit:', body.hits.hits[0])
-  
-      if (body && body.hits && body.hits.total.value > 0) {
-        return body.hits.hits[0]._source
+
+      if (response && response.hits && response.hits.total.value > 0) {
+        return response.hits.hits[0]._source
       } else {
         return null
       }
     } catch (error) {
       console.error('Error searching for max windspeed:', error)
+    }
+  }
+
+  async getStationsWithModerateWindSpeed() {
+    try {
+      const windSpeedThreshold = 3.4 // Set the threshold for "måttlig vind" (moderate wind)
+      const response = await client.search({
+        index: 'smhi-data',
+        body: {
+          size: 1000,  // Adjust the number of stations to return
+          query: {
+            bool: {
+              must: [
+                { range: { "windSpeed": { "gte": windSpeedThreshold } } }
+              ]
+            }
+          },
+          sort: [{ "windSpeed": { "order": "desc" } }]
+          }
+        })
+
+      if (response && response.hits && response.hits.total.value > 0) {
+          return response.hits.hits.map(hit => hit._source)  // Returns an array of all stations meeting the criteria
+      } else {
+          console.log('No stations found with wind speed above', windSpeedThreshold)
+          return []
+      }
+    } catch (error) {
+        console.error('Error searching for stations with high windspeed:', error)
+        return []
     }
   }
 }

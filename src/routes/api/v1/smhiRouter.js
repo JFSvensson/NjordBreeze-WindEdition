@@ -62,6 +62,31 @@ router.get(
   (req, res) => smhiController.getCurrentHighestWindSpeed(req, res)
 )
 
+
+/**
+ * @openapi
+ * /smhi/stations-with-moderate-wind-speed:
+ *  get:
+ *    summary: Get all stations with wind speed above 3.4 m/s.
+ *    description: Returns information about the stations with a wind speed above the threshold for moderate winds.
+ *    tags:
+ *      - SMHI Weather Stations
+ *    responses:
+ *      '200':
+ *        description: Successful response with SMHI weather station information.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/SMHIWeatherStation'
+ *      '404':
+ *        description: SMHI weather station not found.
+ */
+router.get(
+  '/stations-with-moderate-wind-speed',
+  hateoas.addLinks,
+  (req, res) => smhiController.getStationsWithModerateWindSpeed(req, res)
+)
+
 /**
  * @openapi
  * components:
