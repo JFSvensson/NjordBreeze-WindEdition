@@ -25,7 +25,7 @@ export class HateoasMiddleware {
         description: 'Current resource.'
       },
       documentation: {
-        href: 'https://svenssonom.se/njordbreeze/docs/',
+        href: 'https://svenssonom.se/njordbreeze-we/docs/',
         rel: 'documentation',
         description: 'API documentation.'
       }
@@ -35,146 +35,26 @@ export class HateoasMiddleware {
     let dynamicLinks = {}
     
     if (req.originalUrl === '/api/v1') {
-      dynamicLinks.authRegister = {
-        href: '/auth/register',
-        rel: 'auth',
-        method: 'POST',
-        description: 'Register user.'
-      }
-      dynamicLinks.authLogin = {
-        href: '/auth/login',
-        rel: 'auth',
-        method: 'POST',
-        description: 'Login user.'
-      }
-      dynamicLinks.stationsGet = {
-        href: '/stations',
-        rel: 'stations',
+      dynamicLinks.smhi = {
+        href: '/smhi',
+        rel: 'smhi',
         method: 'GET',
-        description: 'Get all weather stations.'
-      }
-      dynamicLinks.stationsGetId = {
-        href: '/stations/:id',
-        rel: 'stations',
-        method: 'GET',
-        description: 'Get a specific weather station.'
-      }
-      dynamicLinks.weather = {
-        href: '/weather',
-        rel: 'weather',
-        method: 'GET',
-        description: 'Get all weather data.'
-      }
-      dynamicLinks.webhooksRegister = { 
-        href: '/webhooks/register',
-        rel: 'webhooks',
-        method: 'POST',
-        description: 'Register a new webhook.'
-      }
-      dynamicLinks.webhooksDelete = {
-        href: '/webhooks/remove/:id',
-        rel: 'webhooks',
-        method: 'DELETE',
-        description: 'Remove a webhook.'
+        description: 'Get smhi data.'
       }
     }
 
-    if (req.originalUrl === `/api/v1/users/${req.params.id}` && req.user) {
-      dynamicLinks.authLogout = {
-        href: '/auth/logout',
-        rel: 'auth',
-        method: 'POST',
-        description: 'Logout user.'
-      }
-      dynamicLinks.authRefresh = {
-        href: '/auth/refresh',
-        rel: 'auth',
-        method: 'POST',
-        description: 'Refresh access token.'
-      }
-      dynamicLinks.usersGet = {
-        href: `/users/${req.params.id}`,
-        rel: 'users',
-        method: 'GET',
-        description: 'Get information about the user.'
-      }
-      dynamicLinks.usersUpdate = {
-        href: `/users/${req.params.id}`,
-        rel: 'users',
-        method: 'PUT',
-        description: 'Update user information.'
-      }
-      dynamicLinks.usersDelete = {
-        href: `/users/${req.params.id}`,
-        rel: 'users',
-        method: 'DELETE',
-        description: 'Delete user.'
-      }
-    }    
-
-    if (req.originalUrl === '/api/v1/stations' && req.user) {
-      dynamicLinks.stationsPost = {
-        href: '/stations',
-        rel: 'stations',
-        method: 'POST',
-        description: 'Register a new weather station.'
-      }
-    }
-
-    if (req.originalUrl === `/api/v1/stations/${req.params.id}` && req.user) {
-      dynamicLinks.stationsUpdate = {
-        href: `/stations/${req.params.id}`,
-        rel: 'stations',
-        method: 'PUT',
-        description: 'Update a weather station.'
-      }
-      dynamicLinks.stationsDelete = {
-        href: `/stations/${req.params.id}`,
-        rel: 'stations',
-        method: 'DELETE',
-        description: 'Delete a weather station.'
-      }
-    }
-
-    if (req.originalUrl === '/api/v1/weather') {
-      dynamicLinks.weatherGetStation = {
-        href: '/weather/stations/:id',
-        rel: 'weather',
-        method: 'GET',
-        description: 'Get all weather data from a specific weather station.'
-      }
-      dynamicLinks.weatherGetId = {
-        href: '/weather/:id',
-        rel: 'weather',
-        method: 'GET',
-        description: 'Get a specific set of weather data.'
-      }
+    if (req.originalUrl === '/api/v1/smhi') {
       dynamicLinks.weatherCurrent = {
-        href: '/weather/current/:id',
+        href: 'current-weather',
         rel: 'weather',
         method: 'GET',
-        description: 'Get the current weather data from a specific weather station.'
+        description: 'Get the most current weather data.'
       }
-    }
-
-    if (req.originalUrl === `/api/v1/weather${req.params.id}` && req.user) {
-      dynamicLinks.weatherPost = {
-        href: `/weather/${req.params.id}`,
+      dynamicLinks.windSpeedMax = {
+        href: 'current-highest-wind-speed',
         rel: 'weather',
-        method: 'POST',
-        description: 'Add a new set of weather data.'
-      }
-      dynamicLinks.weatherUpdate = {
-        href: `/weather/${req.params.id}`,
-        rel: 'weather',
-        method: 'PUT',
-        description: 'Update a specific set of weather data.'
-      }
-      dynamicLinks.weatherDelete = {
-        href: `/weather/${req.params.id}`,
-        rel: 'weather',
-        method: 'DELETE',
-        description: 'Delete a specific set of weather data.'
+        method: 'GET',
+        description: 'Get the currently highest wind speed data.'
       }
     }
 
