@@ -7,7 +7,6 @@
  */
 
 import express from 'express'
-import { router as weatherRouter } from './weatherRouter.js'
 import { router as smhiRouter } from './smhiRouter.js'
 import { HateoasMiddleware } from '../../../middleware/hateoasMiddleware.js'
 
@@ -59,5 +58,4 @@ router.get(
   }
 )
 
-router.use('/weather', weatherRouter)
 router.use('/smhi', smhiRouter)
