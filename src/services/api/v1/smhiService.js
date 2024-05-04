@@ -12,7 +12,8 @@ import { getElasticsearchClient } from '../../../config/elasticsearch.js'
 const client = getElasticsearchClient()
 
 export class SMHIService {
-  async getLatestWeather() {
+
+  async getCurrentWeather() {
     // Entry point for the SMHI API. https://opendata.smhi.se/apidocs/metobs/index.html
     const urlEntryPoint = 'https://opendata-download-metobs.smhi.se/api/version/1.0/'
     const allStationsAirTemperature = 'parameter/1/station-set/all/period/latest-hour/data.json'
@@ -63,13 +64,58 @@ export class SMHIService {
       })
 
       // Execute bulk operation
-      await client.bulk({ refresh: true, body: bulkOps })
-      console.log('Bulk operation executed successfully!', bulkOps.length, 'items indexed.', bulkOps)
+      const bulkResponse = await client.bulk({ refresh: true, body: bulkOps.flat() })
+      console.log('Bulk operation response:', bulkResponse)
+
+      console.log('Bulk operation executed successfully!', bulkOps.length, 'items indexed.')
       return bulkOps.map(op => op[1])  // Return only the data
 
     } catch (error) {
       console.error('Error fetching data from SMHI:', error)
       throw error
+    }
+  }
+
+  async getCurrentHighestWindSpeed() {
+
+    console.log('Getting index mapping...')
+    client.indices.exists({ index: 'smhi-data' }).then(console.log)
+
+    try {
+      const mapping = await client.indices.getMapping({ index: 'smhi-data' })
+      console.log('Index mapping:', mapping)
+    } catch (error) {
+      console.error('Error getting index mapping:', error)
+    }  
+
+    console.log('Searching for max windspeed...')
+    try {
+      const body = await client.search({
+        index: 'smhi-data',
+        body: {
+          size: 1,
+          sort: [{ "windSpeed": { "order": "desc" } }],
+          query: {
+            bool: {
+              must: {
+                exists: {
+                  "field": "windSpeed"
+                }
+              }
+            }
+          }
+        }
+      })
+      console.log('Search response:', body)
+      console.log('First hit:', body.hits.hits[0])
+  
+      if (body && body.hits && body.hits.total.value > 0) {
+        return body.hits.hits[0]._source
+      } else {
+        return null
+      }
+    } catch (error) {
+      console.error('Error searching for max windspeed:', error)
     }
   }
 }
