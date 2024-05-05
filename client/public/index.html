@@ -1,25 +1,20 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
-</head>
-<body>
-    <!-- Your HTML goes here -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Wind Speed Heatmap</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="styles.css" />
 
-    <script src="js/main.js"></script>
-    <!-- <script src="js/chart.js"></script>
-    <script src="js/map.js"></script>
-
-
-    <canvas id="myChart"></canvas>
-    
-    <div id="mapid" style="height: 600px;"></div>
-    
-    <div id="mapAllStations" style="height: 600px;"></div> -->
-
-    
-</body>
+        <style>
+            #map { height: 100vh; }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+        <script src="js/app.js"></script>
+    </body>
 </html>
