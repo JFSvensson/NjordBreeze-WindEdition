@@ -40,6 +40,31 @@ router.get(
 
 /**
  * @openapi
+ * /smhi/all-wind-speed-data:
+ *  get:
+ *    summary: Get all wind speed data from all active SMHI weather stations
+ *    description: Returns information about wind speed from all currently active SMHI stations.
+ *    tags:
+ *      - SMHI Weather Stations
+ *    responses:
+ *      '200':
+ *        description: Successful response with SMHI weather station information.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/SMHIWeatherStation'
+ *      '404':
+ *        description: SMHI weather station not found.
+ */
+router.get(
+  '/all-wind-speed-data',
+  hateoas.addLinks,
+  (req, res) => smhiController.getAllWindSpeedData(req, res)
+)
+
+
+/**
+ * @openapi
  * /smhi/current-highest-wind-speed:
  *  get:
  *    summary: Get the most current highest wind speed data from all active SMHI weather stations

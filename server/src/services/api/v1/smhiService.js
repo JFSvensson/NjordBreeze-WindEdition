@@ -74,6 +74,25 @@ export class SMHIService {
     }
   }
 
+  async getAllWindSpeedData() {
+    try {
+      const response = await client.search({
+        index: 'smhi-data',
+        _source: ['windSpeed', 'location'], // Only retrieve these fields
+        body: {
+          query: {
+            match_all: {}
+          }
+        }
+      });
+  
+      return response.hits.hits.map(hit => hit._source);
+    } catch (error) {
+      console.error('Error fetching data from Elasticsearch:', error);
+      throw error;
+    }
+  }
+
   async getCurrentHighestWindSpeed() {
     try {
       const response = await client.search({

@@ -32,6 +32,22 @@ export class SMHIController {
   }
 
   /**
+   * Get all wind speed from all stations.
+   */
+  async getAllWindSpeedData(req, res) {
+    try {
+      const allWindSpeedData = await this.smhiService.getAllWindSpeedData()
+      if (!allWindSpeedData) {
+        return res.status(404).json({ message: 'No wind speed data found' })
+      }
+      res.json(allWindSpeedData)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'An error occurred while fetching the wind speed data' })
+    }
+  }
+
+  /**
    * Get the most current highest wind speed from all stations.
    */
   async getCurrentHighestWindSpeed(req, res) {
