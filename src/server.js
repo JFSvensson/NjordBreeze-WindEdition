@@ -30,9 +30,9 @@ try {
     helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se'],
-        imgSrc: ["'self'", 'data:', 'gitlab.lnu.se'],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se', "https://cdn.jsdelivr.net", "https://unpkg.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se', "https://unpkg.com"],
+        imgSrc: ["'self'", 'data:', 'gitlab.lnu.se', "https://unpkg.com", "https://*.openstreetmap.org"],
         connectSrc: ["'self'", 'gitlab.lnu.se'],
         frameSrc: ["'self'", 'gitlab.lnu.se'],
         objectSrc: ["'none'"],
@@ -49,6 +49,9 @@ try {
 
   // Parse requests of the content type application/json.
   app.use(express.json())
+
+  // Serve static files from the public directory.
+  app.use(express.static('public'))
 
   // Production settings.
   if (app.get('env') === 'production') {
