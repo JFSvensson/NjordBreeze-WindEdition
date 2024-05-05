@@ -30,7 +30,7 @@ try {
     helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se', "https://cdn.jsdelivr.net", "https://unpkg.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se', "https://cdn.jsdelivr.net", "https://unpkg.com", "https://leaflet.github.io"],
         styleSrc: ["'self'", "'unsafe-inline'", 'gitlab.lnu.se', "https://unpkg.com"],
         imgSrc: ["'self'", 'data:', 'gitlab.lnu.se', "https://unpkg.com", "https://*.openstreetmap.org"],
         connectSrc: ["'self'", 'gitlab.lnu.se'],
@@ -51,7 +51,13 @@ try {
   app.use(express.json())
 
   // Serve static files from the public directory.
-  app.use(express.static('./client/public'))
+  app.use(express.static('./client/public', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js')) {
+        res.type('text/javascript')
+      }
+    }
+  }))
 
   // Production settings.
   if (app.get('env') === 'production') {
