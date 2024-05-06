@@ -19,6 +19,8 @@ export class SMHIService {
       const allStationsResponse = await fetch('https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station-set/all/period/latest-hour/data.json')
       const allStationsData = await allStationsResponse.json()
   
+      let indexedStationsCount = 0
+
       // Prepare bulk operations
       const bulkOps = []
   
@@ -54,10 +56,14 @@ export class SMHIService {
         // Execute bulk operation
         const bulkResponse = await client.bulk({ refresh: true, body: bulkOps.flat() })
         console.log('Bulk operation executed successfully for station', station.key)
+        indexedStationsCount++
       } catch (error) {
         console.error(`Error fetching data for station ${station.key}:`, error)
       }
     }
+    
+    console.log(`Total number of indexed stations: ${indexedStationsCount}`)
+
     } catch (error) {
       console.error('Error fetching data from SMHI or storing data in Elasticsearch:', error)
       throw error
