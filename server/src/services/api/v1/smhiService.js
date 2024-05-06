@@ -13,6 +13,43 @@ const client = getElasticsearchClient()
 
 export class SMHIService {
 
+  async fetchAndStoreDataForAllStations() {
+    try {
+      // Fetch all stations
+      const allStationsResponse = await fetch('https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station-set/all/period/latest-hour/data.json')
+      const allStationsData = await allStationsResponse.json()
+  
+      // Prepare bulk operations
+      const bulkOps = []
+  
+    // Fetch data for each station and prepare bulk operation
+    for (const station of allStationsData.station) {
+      try {
+        const temperatureResponse = await fetch(`https://opendata-download-metobs.smhi.se/api/version/latest.json/parameter/1/station/${station.key}/period/latest-months/data.json`)
+        const temperatureData = await temperatureResponse.json()
+
+        const windSpeedResponse = await fetch(`https://opendata-download-metobs.smhi.se/api/version/latest.json/parameter/4/station/${station.key}/period/latest-months/data.json`)
+        const windSpeedData = await windSpeedResponse.json()
+
+        const windDirectionResponse = await fetch(`https://opendata-download-metobs.smhi.se/api/version/latest.json/parameter/3/station/${station.key}/period/latest-months/data.json`)
+        const windDirectionData = await windDirectionResponse.json()
+
+        // Prepare bulk operation
+        const bulkOps = [{ index: { _index: 'smhi-data', _id: station.key }}, { ...temperatureData, windSpeed: windSpeedData.value, windDirection: windDirectionData.value }]
+
+        // Execute bulk operation
+        const bulkResponse = await client.bulk({ refresh: true, body: bulkOps.flat() })
+        console.log('Bulk operation executed successfully for station', station.key)
+      } catch (error) {
+        console.error(`Error fetching data for station ${station.key}:`, error)
+      }
+    }
+    } catch (error) {
+      console.error('Error fetching data from SMHI or storing data in Elasticsearch:', error)
+      throw error
+    }
+  }
+
   async getCurrentWeather() {
     // Entry point for the SMHI API. https://opendata.smhi.se/apidocs/metobs/index.html
     const urlEntryPoint = 'https://opendata-download-metobs.smhi.se/api/version/1.0/'
@@ -78,9 +115,12 @@ export class SMHIService {
     try {
       const response = await client.search({
         index: 'smhi-data',
-        _source: ['windSpeed', 'windDirection', 'location'], // Only retrieve these fields
+        _source: ['windSpeed', 'windDirection', 'location', 'timestamp'], // Only retrieve these fields
         size: 1000, // Adjust the number of stations to return
         body: {
+          sort: [
+            { timestamp: { order: 'asc' } } // Sort by timestamp in ascending order
+          ],
           query: {
             match_all: {}
           }

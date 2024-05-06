@@ -40,6 +40,30 @@ router.get(
 
 /**
  * @openapi
+ * /smhi/monthly-weather:
+ *  get:
+ *    summary: Get the weather data for last month from all currently active SMHI weather stations
+ *    description: Returns information about temperature, wind speed and wind direction from all currently active SMHI stations.
+ *    tags:
+ *      - SMHI Weather Stations
+ *    responses:
+ *      '200':
+ *        description: Successful response with SMHI weather station information.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/SMHIWeatherStation'
+ *      '404':
+ *        description: SMHI weather station not found.
+ */
+router.get(
+  '/monthly-weather',
+  hateoas.addLinks, 
+ (req, res) => smhiController.fetchAndStoreDataForAllStations(req, res)
+)
+
+/**
+ * @openapi
  * /smhi/all-wind-speed-data:
  *  get:
  *    summary: Get all wind speed data from all active SMHI weather stations

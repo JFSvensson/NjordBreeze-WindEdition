@@ -32,6 +32,21 @@ export class SMHIController {
   }
 
   /**
+   * Get the weather data for last months from all stations.
+   */
+  async fetchAndStoreDataForAllStations(req, res) {
+    try {
+      const monthsWeather = await this.smhiService.fetchAndStoreDataForAllStations()
+      if (!monthsWeather) {
+        return res.status(404).json({ message: 'No weather data found' })
+      }
+      res.json(monthsWeather)
+    } catch (error) {
+      res.status(500).json({ message: 'An error occurred while fetching the weather data.' })
+    }
+  }
+  
+  /**
    * Get all wind speed from all stations.
    */
   async getAllWindSpeedData(req, res) {
