@@ -78,7 +78,7 @@ export class SMHIService {
     try {
       const response = await client.search({
         index: 'smhi-data',
-        _source: ['windSpeed', 'location'], // Only retrieve these fields
+        _source: ['windSpeed', 'windDirection', 'location'], // Only retrieve these fields
         size: 1000, // Adjust the number of stations to return
         body: {
           query: {
