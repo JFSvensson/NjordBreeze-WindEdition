@@ -32,5 +32,5 @@ export function resetUpdates() {
     pauseButton.disabled = true
     pauseButton.textContent = 'Paused'
     resetButton.disabled = true
-    datetimeDisplay.innerText = `Data displayed for: ${new Date(1703725200000).toLocaleString()}`
+    datetimeDisplay.innerText = `${new Date(1703725200000).toLocaleString()}`
 }
