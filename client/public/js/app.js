@@ -3,23 +3,29 @@ import { fetchData } from './fetchData.js'
 import { updateMarkers } from './updateMarkers.js'
 import { startUpdates, pauseUpdates, resumeUpdates } from './controls.js'
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const map = initializeMap()
     const datetimeDisplay = document.getElementById('datetime-display')
     let hoursPassed = 0
+    let stations;
 
     async function performUpdates() {
-        const data = await fetchData('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data')
+        let timeToBegin = 1703725200000; // Start date
+        hoursPassed = updateMarkers(map, stations, timeToBegin, hoursPassed, datetimeDisplay);
+    }
+
+    try {
+        const data = await fetchData('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data');
         if (data) {
-            const stations = Object.values(data)
-                .filter(station => station.location && station.location.coordinates)
-            let timeToBegin = 1703725200000 // Start date
-            hoursPassed = updateMarkers(map, stations, timeToBegin, hoursPassed, datetimeDisplay)
+            stations = Object.values(data)
+                .filter(station => station.location && station.location.coordinates);
         }
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
 
     document.getElementById('start-button').addEventListener('click', () => startUpdates(performUpdates, 500))
-    document.getElementById('pause-button').addEventListener('click', pauseUpdates)
+    document.getElementById('pause-button').addEventListener('click', pauseUpdates())
     document.getElementById('resume-button').addEventListener('click', () => resumeUpdates(performUpdates, 500))
     document.getElementById('restart-button').addEventListener('click', () => {
         pauseUpdates()
