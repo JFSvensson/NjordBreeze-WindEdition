@@ -35,7 +35,21 @@ export class SMHIService {
         const windDirectionData = await windDirectionResponse.json()
 
         // Prepare bulk operation
-        const bulkOps = [{ index: { _index: 'smhi-data', _id: station.key }}, { ...temperatureData, windSpeed: windSpeedData.value, windDirection: windDirectionData.value }]
+        // const bulkOps = [{ index: { _index: 'smhi-data', _id: station.key }}, { ...temperatureData, windSpeed: windSpeedData.value, windDirection: windDirectionData.value }]
+        const bulkOps = temperatureData.value.map(item => {
+          const windSpeedItem = windSpeedData.value.find(windItem => windItem.date === item.date)
+          const windDirectionItem = windDirectionData.value.find(windItem => windItem.date === item.date)
+        
+          return [
+            { index: { _index: 'smhi-data', _id: `${station.key}-${item.date}` } },
+            { 
+              date: item.date, 
+              temperature: item.value, 
+              windSpeed: windSpeedItem ? windSpeedItem.value : null, 
+              windDirection: windDirectionItem ? windDirectionItem.value : null 
+            }
+          ]
+        })
 
         // Execute bulk operation
         const bulkResponse = await client.bulk({ refresh: true, body: bulkOps.flat() })
