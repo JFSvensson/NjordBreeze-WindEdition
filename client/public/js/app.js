@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     try {
-        const data = await fetchData('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data');
+        const data = await fetchData('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data')
         if (data) {
             stations = Object.values(data)
-                .filter(station => station.location && station.location.coordinates);
+                .filter(station => station.location && station.location.coordinates)
         }
     } catch (error) {
         console.error('Error fetching data:', error);
