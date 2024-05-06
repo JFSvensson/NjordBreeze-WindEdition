@@ -1,13 +1,15 @@
 import { initializeMap } from './mapSetup.js'
+import { displayColorScale } from './colorScale.js'
 import { fetchData } from './fetchData.js'
 import { updateMarkers } from './updateMarkers.js'
 import { startUpdates, pauseUpdates, resetUpdates } from './controls.js'
 
 document.addEventListener('DOMContentLoaded', async function() {
     const map = initializeMap()
+    displayColorScale()
     const datetimeDisplay = document.getElementById('datetime-display')
     let hoursPassed = 0
-    let stations;
+    let stations
 
     async function performUpdates() {
         let timeToBegin = 1703725200000; // Start date
