@@ -5,6 +5,9 @@ import { updateMarkers } from './updateMarkers.js'
 import { startUpdates, pauseUpdates, resetUpdates } from './controls.js'
 
 document.addEventListener('DOMContentLoaded', async function() {
+    document.getElementById('info-modal').style.display = 'flex'
+    document.getElementById('close-info-button').addEventListener('click', () => closeInfo())
+
     const map = initializeMap()
     displayColorScale()
     const datetimeDisplay = document.getElementById('datetime-display')
@@ -33,3 +36,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         resetUpdates()
     })
 })
+
+function closeInfo() {
+    document.getElementById('info-modal').style.display = 'none'
+}
