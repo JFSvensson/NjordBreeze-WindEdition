@@ -25,3 +25,37 @@ body, html {
 .wind-direction-arrow {
   font-size: 20px;
 }
+
+#color-scale {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+  width: 75%;
+  max-width: 400px;
+}
+
+.color-legend {
+  display: flex;
+  align-items: center;
+}
+
+#color-scale-container {
+  height: 20px;
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.color-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 1rem;
+  white-space: nowrap;
+}
