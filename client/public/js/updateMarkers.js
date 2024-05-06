@@ -1,12 +1,14 @@
+let markers = []  // Save markers in an array to be able to remove them later
+
 export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayElement) {
     let timestampIndex = timeToBegin + (3600000 * hoursPassed)
     displayElement.innerText = `Data displayed for: ${new Date(timestampIndex).toLocaleString()}`
 
-    map.eachLayer(layer => {
-        if (layer instanceof L.Marker) {
-            map.removeLayer(layer)
-        }
+    // Remove old markers
+    markers.forEach(marker => {
+        map.removeLayer(marker)
     })
+    markers = [] // Clear the array
 
     stations.forEach(station => {
         if (station.date === timestampIndex) {
@@ -15,7 +17,7 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
             const windSpeed = parseFloat(station.windSpeed)
             const windDirection = station.windDirection
 
-            L.marker([lat, lon], {
+            const speedMarker = L.marker([lat, lon], {
                 icon: L.divIcon({
                     className: 'wind-speed-marker',
                     html: `<span>${windSpeed.toFixed(1)}</span>`,
@@ -23,7 +25,7 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
                 })
             }).addTo(map)
 
-            L.marker([lat, lon], {
+            const directionMarker = L.marker([lat, lon], {
                 icon: L.divIcon({
                     className: 'wind-direction-arrow',
                     html: `<div style='transform: rotate(${windDirection}deg); transform-origin: center;'>➤</div>`,
@@ -31,6 +33,9 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
                     iconAnchor: [15, 15]
                 })
             }).addTo(map)
+
+            markers.push(speedMarker)
+            markers.push(directionMarker)
         }
     })
 
