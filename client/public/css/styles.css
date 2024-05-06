@@ -3,3 +3,8 @@
   line-height: 30px; /* Match the height of the marker */
   font-size: 14px;
 }
+
+.wind-direction-arrow {
+  color: red;
+  font-size: 20px;
+}
