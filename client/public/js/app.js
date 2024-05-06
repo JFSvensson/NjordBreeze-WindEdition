@@ -21,4 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('start-button').addEventListener('click', () => startUpdates(performUpdates, 500))
     document.getElementById('pause-button').addEventListener('click', pauseUpdates)
     document.getElementById('resume-button').addEventListener('click', () => resumeUpdates(performUpdates, 500))
+    document.getElementById('restart-button').addEventListener('click', () => {
+        pauseUpdates()
+        hoursPassed = 0 // Reset the hoursPassed
+        startUpdates(performUpdates, 500)
+    })
 })
