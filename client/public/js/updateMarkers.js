@@ -26,7 +26,7 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
             const directionMarker = L.marker([lat, lon], {
                 icon: L.divIcon({
                     className: 'wind-direction-arrow',
-                    html: `<div style='transform: rotate(${windDirection}deg); color: ${color}; transform-origin: center;'>➤</div>`,
+                    html: `<div style='transform: rotate(${windDirection}deg); color: ${color}; transform-origin: 25% 50%;'>➤</div>`,
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 })
