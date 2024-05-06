@@ -4,7 +4,7 @@ let markers = []  // Save markers in an array to be able to remove them later
 
 export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayElement) {
     let timestampIndex = timeToBegin + (3600000 * hoursPassed)
-    displayElement.innerText = `Data displayed for: ${new Date(timestampIndex).toLocaleString()}`
+    displayElement.innerText = `${new Date(timestampIndex).toLocaleString()}`
 
     // Remove old markers
     markers.forEach(marker => {
