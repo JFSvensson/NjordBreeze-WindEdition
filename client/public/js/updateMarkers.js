@@ -19,6 +19,7 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
                 return
             }
             const windDirection = station.windDirection
+            const color = getColorForWindSpeed(windSpeed)  // Get color based on wind speed
 
             const speedMarker = L.marker([lat, lon], {
                 icon: L.divIcon({
@@ -31,7 +32,7 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
             const directionMarker = L.marker([lat, lon], {
                 icon: L.divIcon({
                     className: 'wind-direction-arrow',
-                    html: `<div style='transform: rotate(${windDirection}deg); transform-origin: center;'>➤</div>`,
+                    html: `<div style='transform: rotate(${windDirection}deg); color: ${color}; transform-origin: center;'>➤</div>`,
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 })
@@ -44,3 +45,16 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
 
     return hoursPassed + 1
 }
+
+function getColorForWindSpeed(windSpeed) {
+    if (windSpeed < 5) {
+        return '#00bfff'; // Ljusblå för svaga vindar
+    } else if (windSpeed < 15) {
+        return '#007fff'; // Mörkblå för måttliga vindar
+    } else if (windSpeed < 25) {
+        return '#ffbf00'; // Gul för starka vindar
+    } else {
+        return '#ff0000'; // Röd för mycket starka vindar
+    }
+}
+
