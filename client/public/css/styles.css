@@ -1,6 +1,24 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; 
+}
+
+#map {
+  height: 90vh;
+  width: 100%;
+}
+
+#controls, #datetime-display {
+  text-align: center;
+  margin-top: 10px;
+}
+
 .wind-speed-marker {
   text-align: center;
-  line-height: 30px; /* Match the height of the marker */
+  line-height: 30px;
   font-size: 14px;
 }
 

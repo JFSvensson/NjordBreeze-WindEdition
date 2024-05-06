@@ -3,18 +3,21 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Wind Speed Heatmap</title>
+        <title>NjordBreeze - Wind Edition</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <link rel="stylesheet" href="css/styles.css" />
 
-        <style>
-            #map { height: 100vh; }
-        </style>
     </head>
     <body>
         <div id="map"></div>
+        <div id="datetime-display"></div>
+        <div id="controls">
+            <button id="start-button">Start</button>
+            <button id="pause-button">Pause</button>
+            <button id="resume-button">Resume</button>
+        </div>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
-        <script src="js/app.js"></script>
+        <script type="module" src="js/app.js"></script>
     </body>
 </html>
