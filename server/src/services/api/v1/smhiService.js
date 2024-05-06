@@ -8,12 +8,18 @@
 
 import { SMHIStation } from '../../../models/smhiStation.js'
 import { getElasticsearchClient } from '../../../config/elasticsearch.js'
+// import { ElasticsearchService } from './elasticsearchService.js'
 
 const client = getElasticsearchClient()
+// const elasticService = new ElasticsearchService()
 
 export class SMHIService {
 
   async fetchAndStoreDataForAllStations() {
+
+    // await elasticService.removeIndex()
+    // await elasticService.createIndex()
+
     try {
       // Fetch all stations
       const allStationsResponse = await fetch('https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station-set/all/period/latest-hour/data.json')
@@ -45,6 +51,13 @@ export class SMHIService {
           return [
             { index: { _index: 'smhi-data', _id: `${station.key}-${item.date}` } },
             { 
+              key: station.key,
+              stationname: station.stationname,
+              location: {
+                type: "Point",
+                coordinates: [station.longitude, station.latitude]
+              },
+              owner: station.owner,
               date: item.date, 
               temperature: item.value, 
               windSpeed: windSpeedItem ? windSpeedItem.value : null, 
@@ -61,7 +74,7 @@ export class SMHIService {
         console.error(`Error fetching data for station ${station.key}:`, error)
       }
     }
-    
+
     console.log(`Total number of indexed stations: ${indexedStationsCount}`)
 
     } catch (error) {
@@ -135,22 +148,21 @@ export class SMHIService {
     try {
       const response = await client.search({
         index: 'smhi-data',
-        _source: ['windSpeed', 'windDirection', 'location', 'timestamp'], // Only retrieve these fields
-        size: 1000, // Adjust the number of stations to return
+        _source: ['windSpeed', 'windDirection', 'location', 'date'],
+        size: 10000,
         body: {
           sort: [
-            { timestamp: { order: 'asc' } } // Sort by timestamp in ascending order
+            { date: { order: 'asc' } }
           ],
           query: {
             match_all: {}
           }
         }
-      });
-  
-      return response.hits.hits.map(hit => hit._source);
+      })
+      return response.hits.hits.map(hit => hit._source)
     } catch (error) {
-      console.error('Error fetching data from Elasticsearch:', error);
-      throw error;
+      console.error('Error fetching data from Elasticsearch:', error)
+      throw error
     }
   }
 
