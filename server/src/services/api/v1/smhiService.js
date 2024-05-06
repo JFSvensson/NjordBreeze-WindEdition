@@ -144,27 +144,60 @@ export class SMHIService {
     }
   }
 
+  // async getAllWindSpeedData() {
+  //   try {
+  //     const response = await client.search({
+  //       index: 'smhi-data',
+  //       _source: ['windSpeed', 'windDirection', 'location', 'date'],
+  //       size: 10000,
+  //       body: {
+  //         sort: [
+  //           { date: { order: 'asc' } }
+  //         ],
+  //         query: {
+  //           match_all: {}
+  //         }
+  //       }
+  //     })
+  //     return response.hits.hits.map(hit => hit._source)
+  //   } catch (error) {
+  //     console.error('Error fetching data from Elasticsearch:', error)
+  //     throw error
+  //   }
+  // }
+
   async getAllWindSpeedData() {
-    try {
-      const response = await client.search({
+    let allDocuments = []
+    let searchAfter
+    let response
+
+    do {
+      response = await client.search({
         index: 'smhi-data',
         _source: ['windSpeed', 'windDirection', 'location', 'date'],
-        size: 10000,
+        size: 1000,
         body: {
           sort: [
             { date: { order: 'asc' } }
           ],
           query: {
             match_all: {}
-          }
+          },
+          search_after: searchAfter
         }
       })
-      return response.hits.hits.map(hit => hit._source)
-    } catch (error) {
-      console.error('Error fetching data from Elasticsearch:', error)
-      throw error
-    }
+  
+      const hits = response.hits.hits
+      hits.forEach(hit => allDocuments.push(hit._source))
+
+      if (hits.length) {
+        searchAfter = hits[hits.length - 1].sort
+      }
+    } while (response && response.hits.hits.length)
+  
+    return allDocuments
   }
+  
 
   async getCurrentHighestWindSpeed() {
     try {
