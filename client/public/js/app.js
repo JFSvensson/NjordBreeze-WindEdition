@@ -1,72 +1,69 @@
 document.addEventListener('DOMContentLoaded', function() {
     const map = L.map('map').setView([62.0, 15.0], 5) // Center of Sweden
-    let date = new Date()
-    date.setMonth(date.getMonth() - 1)
-    let timestampIndex = date.getTime()
-    let stations = []
-  
+    let hoursPassed = 0
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map)
   
-    fetch('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data')
-      .then(response => response.json())
-      .then(data => {
-        stations = Object.values(data)
-          .filter(station => station.location && station.location.coordinates)
-        updateMarkers()
-        setInterval(updateMarkers, 5000) // Update every 5 seconds
-      })
+    async function fetchData() {
+        try {
+            const response = await fetch('https://svenssonom.se/njordbreeze-we/api/v1/smhi/all-wind-speed-data')
+            const data = await response.json()
+            const stations = Object.values(data)
+                .filter(station => station.location && station.location.coordinates)
+            let timeToBegin = 1703725200000 // 2024-01-01
+            setInterval(() => {
+                updateMarkers(stations, timeToBegin)
+            }, 500)
+        } catch (error) {
+            console.error('Error:', error)
+        }
+    }
 
-      function updateMarkers() {
+    fetchData()
+
+    function updateMarkers(stations, timeToBegin) {
+        let timestampIndex = timeToBegin + ( 3600000 * hoursPassed )
+
+        if (!stations || !Array.isArray(stations)) {
+            return
+        }
+
         map.eachLayer(layer => {
             if (layer instanceof L.Marker) {
                 map.removeLayer(layer)
             }
         })
 
-        stations.forEach(station => {
-            const lat = station.location.coordinates[1]
-            const lon = station.location.coordinates[0]
-            const windData = station.windData.find(item => item.date === timestampIndex)
-            if (!windData) {
-            return
-            }
-            const intensity = parseFloat(windData.windSpeed)
-            const direction = windData.windDirection
+        stations.filter(station => station.windSpeed !== "0.0") // Filtrera bort stationer med 0 i vindhastighet
+           .forEach(station => {
+                if (station.date === timestampIndex) {
+                    const lat = station.location.coordinates[1]
+                    const lon = station.location.coordinates[0]
+                    const windSpeed = parseFloat(station.windSpeed)
+                    const windDirection = station.windDirection
 
-            // Check if intensity is NaN
-            if (isNaN(intensity)) {
-                return null
-            }
 
-            // Add a marker for the wind speed
-            L.marker([lat, lon], {
-                icon: L.divIcon({
-                    className: 'wind-speed-marker',
-                    html: intensity.toFixed(1),
-                    iconSize: [30, 30]
-                })
-            }).addTo(map)
+                    L.marker([lat, lon], {
+                        icon: L.divIcon({
+                            className: 'wind-speed-marker',
+                            html: `<span>${windSpeed.toFixed(1)}</span>`,
+                            iconSize: [30, 30]
+                        })
+                    }).addTo(map);
 
-            // Add a marker for the wind direction
-            L.marker([lat, lon], {
-                icon: L.divIcon({
-                    className: 'wind-direction-arrow',
-                    html: `<div style='transform: rotate(${direction}deg); transform-origin: center;'>➤</div>`,
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
-                })
-            }).addTo(map)
-        }).filter(station => station !== null) // Filter out stations with a windSpeed of NaN
+                    L.marker([lat, lon], {
+                        icon: L.divIcon({
+                            className: 'wind-direction-arrow',
+                            html: `<div style='transform: rotate(${windDirection}deg); transform-origin: center;'>➤</div>`,
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        })
+                    }).addTo(map)
+                }
+            })
 
-        timestampIndex += 86400000 // Add one day
+        hoursPassed++ // Add one hour
     }
-  
-    // L.heatLayer(points, {
-    //     radius: 50,
-    //     blur: 30,
-    //     maxZoom: 15,
-    //     max: 33,
-    // }).addTo(map)
 })
