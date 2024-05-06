@@ -1,3 +1,5 @@
+import { getColorForWindSpeed } from './colorScale.js'
+
 let markers = []  // Save markers in an array to be able to remove them later
 
 export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayElement) {
@@ -44,15 +46,4 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
     })
 
     return hoursPassed + 1
-}
-
-function getColorForWindSpeed(windSpeed) {
-    // Normalise the wind speed to a value between 0 and 1
-    const normalizedSpeed = Math.min(windSpeed / 33, 1) // Maximum is 33 m/s (Orkan)
-
-    let lightness = 70 - (normalizedSpeed * 70) // Start at 70%, going to 0%
-    let saturation = 100
-    let hue = 0
-
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
