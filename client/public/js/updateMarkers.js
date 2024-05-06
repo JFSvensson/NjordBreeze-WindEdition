@@ -15,6 +15,9 @@ export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayEl
             const lat = station.location.coordinates[1]
             const lon = station.location.coordinates[0]
             const windSpeed = parseFloat(station.windSpeed)
+            if (isNaN(windSpeed)) {
+                return
+            }
             const windDirection = station.windDirection
 
             const speedMarker = L.marker([lat, lon], {
