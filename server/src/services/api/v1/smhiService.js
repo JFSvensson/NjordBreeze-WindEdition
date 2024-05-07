@@ -171,6 +171,10 @@ export class SMHIService {
     let searchAfter
     let response
 
+    const oneMonthInMilliseconds = 30 * 24 * 60 * 60 * 1000
+    const startDate = 1703725200000 // The start date in milliseconds, from data-set
+    const endDate = startDate + oneMonthInMilliseconds // The end date in milliseconds
+
     do {
       response = await client.search({
         index: 'smhi-data',
@@ -181,7 +185,19 @@ export class SMHIService {
             { date: { order: 'asc' } }
           ],
           query: {
-            match_all: {}
+            bool: {
+              must: [
+                { match_all: {} },
+                {
+                  range: {
+                    date: {
+                      gte: startDate,
+                      lte: endDate
+                    }
+                  }
+                }
+              ]
+            }
           },
           search_after: searchAfter
         }
