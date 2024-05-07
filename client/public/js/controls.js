@@ -10,19 +10,19 @@ export function startUpdates(updateFunction, interval) {
         clearInterval(intervalId)
     }
     intervalId = setInterval(updateFunction, interval)
-    startButton.textContent = 'Running...'
+    startButton.textContent = 'Körs...'
     startButton.disabled = true
     pauseButton.disabled = false
-    pauseButton.textContent = 'Pause'
+    pauseButton.textContent = 'Paus'
     resetButton.disabled = false
 }
 
 export function pauseUpdates() {
     clearInterval(intervalId)
     pauseButton.disabled = true
-    pauseButton.textContent = 'Paused'
+    pauseButton.textContent = 'Pausad'
     startButton.disabled = false
-    startButton.textContent = 'Resume'
+    startButton.textContent = 'Återuppta'
 }
 
 export function resetUpdates() {
@@ -30,7 +30,7 @@ export function resetUpdates() {
     startButton.disabled = false
     startButton.textContent = 'Start'
     pauseButton.disabled = true
-    pauseButton.textContent = 'Paused'
+    pauseButton.textContent = 'Pausad'
     resetButton.disabled = true
     datetimeDisplay.innerText = `${new Date(1703725200000).toLocaleString()}`
 }
