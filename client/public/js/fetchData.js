@@ -1,14 +1,19 @@
 export async function fetchData(url) {
+  const timeSlider = document.getElementById('time-slider')
+  const loadingBar = document.getElementById('loading-bar')
+
   try {
-    document.getElementById('loading-bar').style.display = 'flex'
+    loadingBar.style.display = 'flex'
+    timeSlider.disabled = true
 
     const response = await fetch(url)
     const data = await response.json()
 
-    document.getElementById('loading-bar').style.display = 'none'
-
     return data
   } catch (error) {
     console.error('Error fetching data:', error)
+  } finally {
+    loadingBar.style.display = 'none'
+    timeSlider.disabled = false
   }
 }
