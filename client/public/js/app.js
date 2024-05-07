@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('close-info-button').addEventListener('click', () => closeInfo())
 
     document.getElementById('time-slider').addEventListener('input', (event) => {
-        hoursPassed = parseInt(event.target.value, 10)
+        hoursPassed = parseInt((event.target.value * 24), 10)
         console.log('Slider set: ', hoursPassed)
         performUpdates()
     })
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const datetimeDisplay = document.getElementById('datetime-display')
 
     async function performUpdates() {
-        let timeToBegin = 1703725200000; // Start date
+        let timeToBegin = 1703725200000; // Start date of loaded data 
         hoursPassed = updateMarkers(map, stations, timeToBegin, hoursPassed, datetimeDisplay);
     }
 
@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('pause-button').addEventListener('click', () => pauseUpdates())
     document.getElementById('reset-button').addEventListener('click', () => { 
         hoursPassed = 0 // Reset the hoursPassed
+        document.getElementById('time-slider').value = 0
         resetUpdates()
     })
 })

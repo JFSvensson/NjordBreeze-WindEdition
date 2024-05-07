@@ -5,6 +5,10 @@ let markers = []  // Save markers in an array to be able to remove them later
 export function updateMarkers(map, stations, timeToBegin, hoursPassed, displayElement) {
     let timestampIndex = timeToBegin + (3600000 * hoursPassed)
     displayElement.innerText = `${new Date(timestampIndex).toLocaleString()}`
+    let timeSlider = document.getElementById('time-slider')
+    if (hoursPassed % 24 === 0) {
+        timeSlider.value = parseInt(timeSlider.value, 10) + 1
+    }
 
     // Remove old markers
     markers.forEach(marker => {
