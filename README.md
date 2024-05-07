@@ -30,7 +30,7 @@ https://svenssonom.se/njordbreeze-we/
 
 ## Additional features
 
-Explain how you have addressed the assignment requirements. If you've added any custom functionality, discuss them in this section and link to the specific issues you have closed.
+NjordBreeze - Wind Edition is a functional and, hopefully, engaging data visualization based on a large dataset and made available on the web. It is interactive in that the user can start, pause and reset the visualization, as well as jump in time to find interesting times, or rather interesting wind patterns. 
 
 ## Acknowledgements
 
